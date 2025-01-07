@@ -3,18 +3,27 @@
 import { ArrowLeftIcon, ArrowRightIcon } from '@heroicons/react/24/outline';
 import clsx from 'clsx';
 import Link from 'next/link';
+import { useSearchParams, usePathname } from 'next/navigation';
 import { generatePagination } from '@/app/lib/utils';
 
 export default function Pagination({ totalPages }: { totalPages: number }) {
   // NOTE: Uncomment this code in Chapter 11
+  const searchParams = useSearchParams(); //当前url参数对象 因为Pagination是客户端组件，通过hook获取参数
+  const pathname = usePathname(); //当前路由
 
-  // const allPages = generatePagination(currentPage, totalPages);
+  const currentPage = Number(searchParams.get("page")) || 1;
+  const allPages = generatePagination(currentPage, totalPages);
 
+  const createPageURL = (page: number | string) => {
+    const params = new URLSearchParams(searchParams); //当前url的参数
+    params.set("page", page.toString());
+    return `${pathname}?${params.toString()}`;
+  }
   return (
     <>
       {/*  NOTE: Uncomment this code in Chapter 11 */}
 
-      {/* <div className="inline-flex">
+      <div className="inline-flex">
         <PaginationArrow
           direction="left"
           href={createPageURL(currentPage - 1)}
@@ -47,7 +56,7 @@ export default function Pagination({ totalPages }: { totalPages: number }) {
           href={createPageURL(currentPage + 1)}
           isDisabled={currentPage >= totalPages}
         />
-      </div> */}
+      </div>
     </>
   );
 }
